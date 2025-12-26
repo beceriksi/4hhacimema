@@ -1,0 +1,27 @@
+name: Whale 4H Volume Spike Screener
+
+on:
+  schedule:
+    - cron: "10 */4 * * *"   # 4 saatte bir (UTC). Türkiye saatine göre kayar.
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          pip install pandas requests yfinance
+
+      - name: Run screener
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+        run: |
+          python -u whale_4h_screener.py
